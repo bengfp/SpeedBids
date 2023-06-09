@@ -12,8 +12,8 @@ using SpeedBids.Data;
 namespace SpeedBids.Data.Migrations
 {
     [DbContext(typeof(SpeedBidsDbContext))]
-    [Migration("20230608060457_addingIdentities")]
-    partial class addingIdentities
+    [Migration("20230609043027_CreatingTables")]
+    partial class CreatingTables
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,21 +24,6 @@ namespace SpeedBids.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("ApplicationUserCarAuction", b =>
-                {
-                    b.Property<int>("CarAuctionId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UsersId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("CarAuctionId", "UsersId");
-
-                    b.HasIndex("UsersId");
-
-                    b.ToTable("ApplicationUserCarAuction");
-                });
 
             modelBuilder.Entity("CarAuctionProduct", b =>
                 {
@@ -84,15 +69,15 @@ namespace SpeedBids.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "d241cf73-4e63-4df7-959a-fe62ff4da727",
-                            ConcurrencyStamp = "f1d001da-2874-49c1-836f-ceef2a3341e8",
+                            Id = "4ee27a23-d050-4972-8b6b-5439e2fc59ce",
+                            ConcurrencyStamp = "029323ff-d338-4f95-a3d9-1d96bfd08022",
                             Name = "admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "0556c5e4-72a3-422f-911c-e3cb80a12b85",
-                            ConcurrencyStamp = "354044c3-9305-43d4-bf1b-7aac30b0d130",
+                            Id = "acb3654d-9d0a-4fbd-88cb-340637e2fce0",
+                            ConcurrencyStamp = "830f56ea-6a66-4c0e-bd52-e47738bd0203",
                             Name = "user",
                             NormalizedName = "USER"
                         });
@@ -279,6 +264,38 @@ namespace SpeedBids.Data.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("SpeedBids.Entities.Bid", b =>
+                {
+                    b.Property<int>("BidId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BidId"));
+
+                    b.Property<float>("BidAmount")
+                        .HasColumnType("real");
+
+                    b.Property<int>("CarAuctionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SalesId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("BidId");
+
+                    b.HasIndex("CarAuctionId");
+
+                    b.HasIndex("SalesId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Bids");
+                });
+
             modelBuilder.Entity("SpeedBids.Entities.Car", b =>
                 {
                     b.Property<int>("CarId")
@@ -313,9 +330,6 @@ namespace SpeedBids.Data.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CarAuctionId"));
-
-                    b.Property<float>("Amount")
-                        .HasColumnType("real");
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
@@ -392,39 +406,15 @@ namespace SpeedBids.Data.Migrations
 
             modelBuilder.Entity("SpeedBids.Entities.Sales", b =>
                 {
-                    b.Property<int>("CarAuctionId")
+                    b.Property<int>("SalesId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CarAuctionId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SalesId"));
 
-                    b.Property<int>("SalesId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("CarAuctionId");
-
-                    b.HasIndex("UserId");
+                    b.HasKey("SalesId");
 
                     b.ToTable("Sales");
-                });
-
-            modelBuilder.Entity("ApplicationUserCarAuction", b =>
-                {
-                    b.HasOne("SpeedBids.Entities.CarAuction", null)
-                        .WithMany()
-                        .HasForeignKey("CarAuctionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SpeedBids.Entities.ApplicationUser", null)
-                        .WithMany()
-                        .HasForeignKey("UsersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("CarAuctionProduct", b =>
@@ -493,6 +483,31 @@ namespace SpeedBids.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("SpeedBids.Entities.Bid", b =>
+                {
+                    b.HasOne("SpeedBids.Entities.CarAuction", "CarAuction")
+                        .WithMany("Bids")
+                        .HasForeignKey("CarAuctionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SpeedBids.Entities.Sales", null)
+                        .WithMany("Bids")
+                        .HasForeignKey("SalesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SpeedBids.Entities.ApplicationUser", "User")
+                        .WithMany("Bids")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CarAuction");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("SpeedBids.Entities.Car", b =>
                 {
                     b.HasOne("SpeedBids.Entities.Product", null)
@@ -526,15 +541,19 @@ namespace SpeedBids.Data.Migrations
                     b.Navigation("Car");
                 });
 
+            modelBuilder.Entity("SpeedBids.Entities.ApplicationUser", b =>
+                {
+                    b.Navigation("Bids");
+                });
+
+            modelBuilder.Entity("SpeedBids.Entities.CarAuction", b =>
+                {
+                    b.Navigation("Bids");
+                });
+
             modelBuilder.Entity("SpeedBids.Entities.Sales", b =>
                 {
-                    b.HasOne("SpeedBids.Entities.ApplicationUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
+                    b.Navigation("Bids");
                 });
 #pragma warning restore 612, 618
         }

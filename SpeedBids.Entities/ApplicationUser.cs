@@ -11,4 +11,5 @@ public class ApplicationUser : IdentityUser
     [StringLength(100)]
     public string LastName { get; set; }
 
+    public List<Bid> Bids { get; set; } = new List<Bid>();
 }

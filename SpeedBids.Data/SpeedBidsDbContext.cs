@@ -19,6 +19,8 @@ public class SpeedBidsDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<Product> Products { get; set; }
     public DbSet<Sales> Sales { get; set; }
 
+    public DbSet<Bid> Bids { get; set; }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
@@ -42,7 +44,29 @@ public class SpeedBidsDbContext : IdentityDbContext<ApplicationUser>
             .WithMany();
 
         builder.Entity<CarAuction>()
-            .HasMany(aCarAuction => aCarAuction.Users)
-            .WithMany();
+            .HasMany(aCarAuction => aCarAuction.Bids)
+            .WithOne(aBid => aBid.CarAuction)
+            .HasForeignKey(aBid => aBid.CarAuctionId);
+
+        builder.Entity<Bid>()
+            .HasOne(aBid => aBid.CarAuction)
+            .WithMany(aCarAuction => aCarAuction.Bids)
+            .HasForeignKey(aBid => aBid.CarAuctionId);
+
+        builder.Entity<ApplicationUser>()
+            .HasMany(anUser => anUser.Bids)
+            .WithOne(aBid => aBid.User);
+
+        builder.Entity<Bid>()
+            .HasOne(aBid => aBid.User)
+            .WithMany(anUser => anUser.Bids)
+            .HasForeignKey(aBid => aBid.UserId)
+            .HasPrincipalKey(anApplicationUser => anApplicationUser.Id);
+
+        builder.Entity<Sales>()
+            .HasMany(aSales => aSales.Bids)
+            .WithOne()
+            .IsRequired();
+
     }
 }

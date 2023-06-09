@@ -21,4 +21,8 @@
     <ProjectReference Include="..\SpeedBids.Data\SpeedBids.Data.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Areas\Identity\Data\" />
+  </ItemGroup>
+
 </Project>

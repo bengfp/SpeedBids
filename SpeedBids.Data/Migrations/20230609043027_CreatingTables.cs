@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SpeedBids.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class addingIdentities : Migration
+    public partial class CreatingTables : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -61,8 +61,7 @@ namespace SpeedBids.Data.Migrations
                     CarAuctionId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Amount = table.Column<float>(type: "real", nullable: false)
+                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -80,6 +79,18 @@ namespace SpeedBids.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Categories", x => x.CategoryId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Sales",
+                columns: table => new
+                {
+                    SalesId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Sales", x => x.SalesId);
                 });
 
             migrationBuilder.CreateTable(
@@ -189,46 +200,36 @@ namespace SpeedBids.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Sales",
+                name: "Bids",
                 columns: table => new
                 {
-                    CarAuctionId = table.Column<int>(type: "int", nullable: false)
+                    BidId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    SalesId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    BidAmount = table.Column<float>(type: "real", nullable: false),
+                    CarAuctionId = table.Column<int>(type: "int", nullable: false),
+                    SalesId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Sales", x => x.CarAuctionId);
+                    table.PrimaryKey("PK_Bids", x => x.BidId);
                     table.ForeignKey(
-                        name: "FK_Sales_AspNetUsers_UserId",
+                        name: "FK_Bids_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ApplicationUserCarAuction",
-                columns: table => new
-                {
-                    CarAuctionId = table.Column<int>(type: "int", nullable: false),
-                    UsersId = table.Column<string>(type: "nvarchar(450)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ApplicationUserCarAuction", x => new { x.CarAuctionId, x.UsersId });
                     table.ForeignKey(
-                        name: "FK_ApplicationUserCarAuction_AspNetUsers_UsersId",
-                        column: x => x.UsersId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ApplicationUserCarAuction_Auctions_CarAuctionId",
+                        name: "FK_Bids_Auctions_CarAuctionId",
                         column: x => x.CarAuctionId,
                         principalTable: "Auctions",
                         principalColumn: "CarAuctionId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Bids_Sales_SalesId",
+                        column: x => x.SalesId,
+                        principalTable: "Sales",
+                        principalColumn: "SalesId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -316,14 +317,9 @@ namespace SpeedBids.Data.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "0556c5e4-72a3-422f-911c-e3cb80a12b85", "354044c3-9305-43d4-bf1b-7aac30b0d130", "user", "USER" },
-                    { "d241cf73-4e63-4df7-959a-fe62ff4da727", "f1d001da-2874-49c1-836f-ceef2a3341e8", "admin", "ADMIN" }
+                    { "4ee27a23-d050-4972-8b6b-5439e2fc59ce", "029323ff-d338-4f95-a3d9-1d96bfd08022", "admin", "ADMIN" },
+                    { "acb3654d-9d0a-4fbd-88cb-340637e2fce0", "830f56ea-6a66-4c0e-bd52-e47738bd0203", "user", "USER" }
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ApplicationUserCarAuction_UsersId",
-                table: "ApplicationUserCarAuction",
-                column: "UsersId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -365,6 +361,21 @@ namespace SpeedBids.Data.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Bids_CarAuctionId",
+                table: "Bids",
+                column: "CarAuctionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Bids_SalesId",
+                table: "Bids",
+                column: "SalesId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Bids_UserId",
+                table: "Bids",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_CarAuctionProduct_ProductsProductId",
                 table: "CarAuctionProduct",
                 column: "ProductsProductId");
@@ -378,11 +389,6 @@ namespace SpeedBids.Data.Migrations
                 name: "IX_Products_CarId",
                 table: "Products",
                 column: "CarId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Sales_UserId",
-                table: "Sales",
-                column: "UserId");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_CarAuctionProduct_Products_ProductsProductId",
@@ -409,9 +415,6 @@ namespace SpeedBids.Data.Migrations
                 table: "Cars");
 
             migrationBuilder.DropTable(
-                name: "ApplicationUserCarAuction");
-
-            migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
             migrationBuilder.DropTable(
@@ -427,25 +430,28 @@ namespace SpeedBids.Data.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "Bids");
+
+            migrationBuilder.DropTable(
                 name: "CarAuctionProduct");
 
             migrationBuilder.DropTable(
                 name: "CategoryProducts");
 
             migrationBuilder.DropTable(
-                name: "Sales");
+                name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "AspNetRoles");
+                name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Sales");
 
             migrationBuilder.DropTable(
                 name: "Auctions");
 
             migrationBuilder.DropTable(
                 name: "Categories");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "Products");
