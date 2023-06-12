@@ -2,10 +2,10 @@
 
 public enum EColor
 {
-    Undefined,
-    Black,
-    Red,
-    White,
-    Gray,
-    Yellow
+	Undefined,
+	Black,
+	Red,
+	White,
+	Gray,
+	Yellow
 }
