@@ -8,15 +8,12 @@ namespace SpeedBids.WebUI.Controllers
 {
     public class HomeController : Controller
     {
-        /*private readonly ILogger<HomeController> _logger;*/
+        private readonly ILogger<HomeController> _logger;
         private readonly SpeedBidsDbContext _dbContext;
 
-        /*public HomeController(ILogger<HomeController> logger)
-		{
-			_logger = logger;
-		}*/
-        public HomeController(SpeedBidsDbContext dbContext)
+        public HomeController(ILogger<HomeController> logger, SpeedBidsDbContext dbContext)
         {
+            _logger = logger;
             _dbContext = dbContext;
         }
 
