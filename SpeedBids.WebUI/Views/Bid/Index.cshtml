@@ -1,0 +1,22 @@
+﻿@model BidViewModel
+
+<div class="d-flex justify-content-center container mt-5">
+    <div class="card p-5 bg-white">
+        <div class="about-product text-center mt-2">
+            <img src=@Model.ProductImage width="300">
+        </div>
+        <div class="stats mt-2">
+            <div class="d-flex justify-content-between p-price"><span>Car Make</span><span>@Model.CarMake</span></div>
+            <div class="d-flex justify-content-between p-price"><span>Car Model</span><span>@Model.CarModel</span></div>
+            <div class="d-flex justify-content-between p-price"><span>Car Type</span><span>@Model.CarType</span></div>
+            <div class="d-flex justify-content-between p-price"><span>Year Model</span><span>@Model.YearModel</span></div>
+            <div class="d-flex justify-content-between p-price"><span>Color</span><span>@Model.Color</span></div>
+            <div class="d-flex justify-content-between p-price"><span>Price</span><span>$@Model.ProductPrice</span></div>
+            <div class="d-flex justify-content-between p-price mt-5"><span>Bid Amount($)</span><span><input type="text" id="amount" name="amount" class="form-control form-control-sm" /></span></div>
+        </div>
+        <button type="button" class="btn btn-lg btn-primary mt-5" onclick="return returnSucess()">Place Bid</button>
+        <div class="d-flex justify-content-center mt-2">
+            <a href="javascript:history.back();">Cancel</a>
+        </div>
+    </div>
+</div>
