@@ -28,6 +28,14 @@ body {
     height: 100%;
 }
 
+.btn.btn-primary {
+    background-color: #48b83e;
+    color: #fff;
+    border: 1px solid #008000;
+    border-radius: 10px;
+    font-weight: 800;
+}
+
 
 
 
